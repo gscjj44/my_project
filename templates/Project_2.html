@@ -2,7 +2,80 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+          integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm"
+          crossorigin="anonymous">
+
+    <!-- JS -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"
+            integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
+            crossorigin="anonymous"></script>
+
+    <title>dnnet</title>
+    <script type="text/javascript">
+
+        $(document).ready(function () {
+            $("#hosworks-box").html("");
+            showhosworks();
+        });
+
+        function makehosworks() {
+            // 1. 제목, 저자, 리뷰 내용을 가져옵니다.
+            let day = $("#day").val();
+            let works = $("#works").val();
+            let etc = $("#etc").val();
+
+            // 3. POST /review 에 저장을 요청합니다.
+            $.ajax({
+                type: "POST",
+                url: "/hosworks",
+                data: {day_give: day, works_give: works, etc_give: etc},
+                success: function (response) {
+                    if (response["result"] == "success") {
+                        window.location.reload();
+                    }
+                }
+            })
+        }
+
+        function showhosworks() {
+            // 1. 리뷰 목록을 서버에 요청하기
+            $.ajax({
+                type: "GET",
+                url: "/hosworks",
+                data: {},
+                success: function (response) {
+                    // 2. 요청 성공 여부 확인하기
+                    if (response["result"] == "success") {
+                        let hosworks = response["hosworks"];
+                        // 3. 요청 성공했을 때 리뷰를 올바르게 화면에 나타내기
+                        for (let i = 0; i < hosworks.length; i++) {
+                            makeCard(hosworks[i]["day"], hosworks[i]["works"], hosworks[i]["etc"]);
+                        }
+                    }
+                }
+            })
+        }
+
+        function makeCard(day, works, etc) {
+            let tempHtml = `<tr>
+                        <td>${day}</td>
+                        <td>${works}</td>
+                        <td>${etc}</td>
+                    </tr>`;
+            $("#hosworks-box").append(tempHtml);
+        }
+
+        //  function validateLength(obj) {
+        //      let content = $(obj).val();
+        //      if (content.length > 140) {
+        //          alert("리뷰는 140자까지 기록할 수 있습니다.");
+        //          $(obj).val(content.substring(0, content.length - 1));
+        //     }
+        // }
+    </script>
     <style>
         body {
             background: #fff;
@@ -15,6 +88,7 @@
             height: 50px;
             margin: auto;
             text-align: center;
+            margin-bottom: 30px;
         }
 
         .bluetop th {
@@ -39,6 +113,17 @@
             text-align: center;
         }
 
+        .info {
+            margin: auto;
+            width: 500px;
+            margin-bottom: 30px;
+
+        }
+
+        .review {
+            text-align: center;
+        }
+
 
     </style>
 </head>
@@ -51,6 +136,7 @@
     <p>email : asdfasdf@nate.com</p>
 </div>
 </br>
+
 <div>
     <table class="bluetop">
         <tr>
@@ -64,17 +150,40 @@
             <td>2000년</td>
         </tr>
     </table>
-
+    <div class="info">
+        <div class="input-group mb-3">
+            <div class="input-group-prepend">
+                <span class="input-group-text">일자</span>
+            </div>
+            <input type="date" class="form-control" id="day">
+        </div>
+        <div class="input-group mb-3">
+            <div class="input-group-prepend">
+                <span class="input-group-text">작업내용</span>
+            </div>
+            <input type="text" class="form-control" id="works">
+        </div>
+        <div class="input-group mb-3">
+            <div class="input-group-prepend">
+                <span class="input-group-text">특이사항</span>
+            </div>
+            <input type="text" class="form-control" id="etc">
+        </div>
+        <div class="review">
+            <button onclick="makehosworks()" type="button" class="btn btn-primary">작성하기</button>
+        </div>
+    </div>
     <table class="bluetop">
         <tr>
             <th>작업날짜</th>
             <th>작업내용</th>
             <th>특이사항</th>
         </tr>
+        <tbody id="hosworks-box">
         <tr>
-            <td>20.08.18</td>
-            <td>2bay_HDD교체,cluster AD 재구성</td>
-            <td>20년12월중 병원이전</td>
+<!--            <td>20.08.18</td>-->
+<!--            <td>2bay_HDD교체,cluster AD 재구성</td>-->
+<!--            <td>20년12월중 병원이전</td>-->
         </tr>
 
     </table>
