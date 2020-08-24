@@ -36,7 +36,7 @@ def write_hosworks():
 @app.route('/hosworks', methods=['GET'])
 def read_hosworks():
     # 1. DB에서 리뷰 정보 모두 가져오기
-    hosworks = list(db.hosworks.find({}, {'_id': 0}))
+    hosworks = list(db.hosworks.find({}, {'_id': 0}).sort("day", -1))
     # 2. 성공 여부 & 리뷰 목록 반환하기
     return jsonify({'result': 'success', 'hosworks': hosworks})
 
