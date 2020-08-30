@@ -15,17 +15,22 @@
 
     <title>dnnet</title>
     <script type="text/javascript">
+
+
         $(document).ready(function () {
+            $('#hosworks-box *').remove();
             $("#hosworks-box").html("");
+
             showhosworks();
         });
 
         function writeHosworks() {
+
             // 1. 제목, 저자, 리뷰 내용을 가져옵니다.
             let day = $("#day").val();
             let works = $("#works").val();
             let etc = $("#etc").val();
-            let name = $("#name").val();
+            let name = $("p.hosn > b").text();
 
             $.ajax({
                 type: "POST",
@@ -33,11 +38,13 @@
                 data: {day_give: day, works_give: works, etc_give: etc, name_give: name},
                 success: function (response) {
                     if (response["result"] == "success") {
-                        window.location.reload();
+                        makeHoswork(day, works, etc, name);
                     }
+
                 }
             })
         }
+
 
         function findHos() {
             $.ajax({
@@ -52,6 +59,13 @@
                         // 3. 요청 성공했을 때 리뷰를 올바르게 화면에 나타내기
                         for (let i = 0; i < findhos.length; i++) {
                             makeHos(findhos[i]["name"], findhos[i]["corpNo"], findhos[i]["addr"], findhos[i]["manager"], findhos[i]["managerPhone"], findhos[i]["managerEmail"]);
+                        }
+                    }
+                    if (response["result"] == "success") {
+                        let hosworks = response["hosworks"];
+                        // 3. 요청 성공했을 때 리뷰를 올바르게 화면에 나타내기
+                        for (let i = 0; i < hosworks.length; i++) {
+                            makeHoswork(hosworks[i]["day"], hosworks[i]["works"], hosworks[i]["etc"], hosworks[i]["name"]);
                             // window.location.reload();
                         }
                     }
@@ -59,26 +73,27 @@
             })
         }
 
-        function showhosworks() {
-            // 1. 리뷰 목록을 서버에 요청하기
-            $('#hosworks-box').empty();
-            $.ajax({
-                type: "GET",
-                url: "/hosworks",
-                data: {},
-                success: function (response) {
-                    // 2. 요청 성공 여부 확인하기
-                    if (response["result"] == "success") {
-                        let hosworks = response["hosworks"];
-                        // 3. 요청 성공했을 때 리뷰를 올바르게 화면에 나타내기
-                        for (let i = 0; i < hosworks.length; i++) {
-                            makeHoswork(hosworks[i]["day"], hosworks[i]["works"], hosworks[i]["etc"], hosworks[i]["name"]);
-                              // window.location.reload();
-                        }
-                    }
-                }
-            })
-        }
+
+        // function showhosworks() {
+        //     // 1. 리뷰 목록을 서버에 요청하기
+        //     $('#hosworks-box').empty();
+        //     $.ajax({
+        //         type: "GET",
+        //         url: "/hosworks",
+        //         data: {},
+        //         success: function (response) {
+        //             // 2. 요청 성공 여부 확인하기
+        //             if (response["result"] == "success") {
+        //                 let hosworks = response["hosworks"];
+        //                 // 3. 요청 성공했을 때 리뷰를 올바르게 화면에 나타내기
+        //                 for (let i = 0; i < hosworks.length; i++) {
+        //                     makeHoswork(hosworks[i]["day"], hosworks[i]["works"], hosworks[i]["etc"], hosworks[i]["name"]);
+        //                       // window.location.reload();
+        //                 }
+        //             }
+        //         }
+        //     })
+        // }
 
         function makeHos(name, corpNo, addr, manager, managerPhone, managerEmail) {
             let tempHtmlhos = `<p class="hosn"><b>${name}</b></p>
@@ -97,11 +112,17 @@
                         <td>${day}</td>
                         <td>${works}</td>
                         <td>${etc}</td>
+                        <td><button type="button" onclick="deleteRow(this);">X</button></td>
                     </tr>`;
             `<b>${name}</b></p>`
 
             $("#hosworks-box").append(tempHtml);
         }
+
+       function deleteRow(ths){
+            var $ths = $(ths);
+            $ths.parents("tr").remove();
+       }
     </script>
 
     <style>
@@ -233,7 +254,7 @@
             <input type="text" class="form-control" id="etc">
         </div>
         <div class="review">
-            <button onclick="writeHosworks()" type="button" class="btn btn-primary">작성하기</button>
+            <button onclick="writeHosworks()" type="button" id="delbtn" class="btn btn-primary">작성하기</button>
         </div>
     </div>
     <table class="bluetop">
@@ -241,6 +262,7 @@
             <th>작업날짜</th>
             <th>작업내용</th>
             <th>특이사항</th>
+            <th>X</th>
         </tr>
         <tbody id="hosworks-box">
         <tr>

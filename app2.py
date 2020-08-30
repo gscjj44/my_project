@@ -11,9 +11,9 @@ db = client.dbsparta  # 'dbsparta'라는 이름의 db를 만듭니다.
 def home():
     return render_template('project_2.html')
 ## HTML을 주는 부분
-@app.route('/search')
-def search():
-    return render_template('project_1_main.html')
+# @app.route('/search')
+# def search():
+#     return render_template('project_1_main.html')
 
 
 ## API 역할을 하는 부분
@@ -49,12 +49,13 @@ def write_hosworks():
     works_receive = request.form['works_give']
     # review_receive로 클라이언트가 준 review 가져오기
     etc_receive = request.form['etc_give']
-
+    name_receive = request.form['name_give']
     # DB에 삽입할 review 만들기
     hosworks = {
         'day': day_receive,
         'works': works_receive,
-        'etc': etc_receive
+        'etc': etc_receive,
+        'name': name_receive,
     }
     # reviews에 review 저장하기
     db.hosworks.insert_one(hosworks)
@@ -62,20 +63,21 @@ def write_hosworks():
     return jsonify({'result': 'success'})
 
 
-@app.route('/hosworks', methods=['GET'])
-def read_hosworks():
-    # 1. DB에서 리뷰 정보 모두 가져오기
-    hosworks = list(db.hosworks.find({}, {'_id': 0}).sort("day", -1))
-    # 2. 성공 여부 & 리뷰 목록 반환하기
-    return jsonify({'result': 'success', 'hosworks': hosworks})
+# @app.route('/hosworks', methods=['GET'])
+# def read_hosworks():
+#     # 1. DB에서 리뷰 정보 모두 가져오기
+#     hosworks = list(db.hosworks.find({}, {'_id': 0}).sort("day", -1))
+#     # 2. 성공 여부 & 리뷰 목록 반환하기
+#     return jsonify({'result': 'success', 'hosworks': hosworks})
 
 @app.route('/findhos', methods=['GET'])
 def find_hos():
     keyword = request.args.get('keyword')
     # 1. DB에서 리뷰 정보 모두 가져오기
     hos = list(db.hos.find({'name': keyword}, {'_id': 0}))
+    hosworks = list(db.hosworks.find({'name': keyword}, {'_id': 0},).sort("day", -1))
     # 2. 성공 여부 & 리뷰 목록 반환하기
-    return jsonify({'result': 'success', 'hos': hos})
+    return jsonify({'result': 'success', 'hos': hos, 'hosworks': hosworks})
 
 
 if __name__ == '__main__':
