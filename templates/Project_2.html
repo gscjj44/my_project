@@ -18,10 +18,10 @@
 
 
         $(document).ready(function () {
-            $('#hosworks-box *').remove();
+
             $("#hosworks-box").html("");
 
-            showhosworks();
+            // showhosworks();
         });
 
         function writeHosworks() {
@@ -52,9 +52,9 @@
                 url: "/findhos",
                 data: {keyword: $('#keyword').val()},
                 success: function (response) {
+                    $("#hosworks-box").html("");
                     // 2. 요청 성공 여부 확인하기
                     if (response["result"] == "success") {
-
                         let findhos = response['hos'];
                         // 3. 요청 성공했을 때 리뷰를 올바르게 화면에 나타내기
                         for (let i = 0; i < findhos.length; i++) {
@@ -73,27 +73,39 @@
             })
         }
 
-
-        // function showhosworks() {
-        //     // 1. 리뷰 목록을 서버에 요청하기
-        //     $('#hosworks-box').empty();
+        function deleteRow(day,e) {
+            $.ajax({
+                type: 'POST',
+                url: '/hosworks/delete',
+                data: {'day_give': day},
+                success: function (response) {
+                    if (response['result'] == 'success') {
+                        //let msg = response['msg'];
+                        //alert(msg)
+                        //메세지 없이 자동으로 새로고침을 하고싶다.
+                        //메세지를 없애면, 서버에서도 msg를 지워도 됨.경
+                        //location.reload();
+                        $(e).parent().parent().remove();
+                    }
+                }
+            });
+        }
+        // function deleteRow(day, works, etc) {
+        //     // 1. 서버에 1) POST 방식으로, 2) /api/delete 라는 url에, 3) name_give라는 이름으로 name을 전달합니다.
+        //     // 참고) POST 방식이므로 data: {'name_give': name} 과 같은 양식이 되어야합니다!
         //     $.ajax({
-        //         type: "GET",
-        //         url: "/hosworks",
-        //         data: {},
+        //         type: "POST",
+        //         url: "/hosworks/delete",
+        //         data: {'day_give': day, 'works_give': works, 'etc_give': etc},
         //         success: function (response) {
-        //             // 2. 요청 성공 여부 확인하기
-        //             if (response["result"] == "success") {
-        //                 let hosworks = response["hosworks"];
-        //                 // 3. 요청 성공했을 때 리뷰를 올바르게 화면에 나타내기
-        //                 for (let i = 0; i < hosworks.length; i++) {
-        //                     makeHoswork(hosworks[i]["day"], hosworks[i]["works"], hosworks[i]["etc"], hosworks[i]["name"]);
-        //                       // window.location.reload();
-        //                 }
+        //             if (response['result'] == 'success') {
+        //                 // 3. 변경된 정보를 반영하기 위해 새로고침합니다.
+        //                 window.location.reload()
         //             }
         //         }
-        //     })
+        //     });
         // }
+
 
         function makeHos(name, corpNo, addr, manager, managerPhone, managerEmail) {
             let tempHtmlhos = `<p class="hosn"><b>${name}</b></p>
@@ -112,17 +124,17 @@
                         <td>${day}</td>
                         <td>${works}</td>
                         <td>${etc}</td>
-                        <td><button type="button" onclick="deleteRow(this);">X</button></td>
+                        <td><button type="button" onclick="deleteRow(this);">x</button></td>
                     </tr>`;
             `<b>${name}</b></p>`
 
             $("#hosworks-box").append(tempHtml);
         }
 
-       function deleteRow(ths){
-            var $ths = $(ths);
-            $ths.parents("tr").remove();
-       }
+        // function deleteRow(ths) {
+        //     var $ths = $(ths);
+        //     $ths.parents("tr").remove();
+        // }
     </script>
 
     <style>
@@ -214,11 +226,11 @@
 </div>
 
 <div class="wrap" style="width:100%; height:100%;" id="findhos-box">
-<!--    <p class="hosn"><b>제일병원</b></p>-->
-<!--    <p>서울시 어디어디</p>-->
-<!--    <p>123123-123123</p>-->
-<!--    <p>아무개 010-0000-0000</p>-->
-<!--    <p>asdfasdf@nate.com</p>-->
+    <!--    <p class="hosn"><b>제일병원</b></p>-->
+    <!--    <p>서울시 어디어디</p>-->
+    <!--    <p>123123-123123</p>-->
+    <!--    <p>아무개 010-0000-0000</p>-->
+    <!--    <p>asdfasdf@nate.com</p>-->
 </div>
 
 <div>
@@ -266,9 +278,9 @@
         </tr>
         <tbody id="hosworks-box">
         <tr>
-            <!--            <td>20.08.18</td>-->
-            <!--            <td>2bay_HDD교체,cluster AD 재구성</td>-->
-            <!--            <td>20년12월중 병원이전</td>-->
+                        <td>20.08.18</td>
+                        <td>2bay_HDD교체,cluster AD 재구성</td>
+                        <td>20년12월중 병원이전</td>
         </tr>
 
     </table>

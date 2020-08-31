@@ -10,10 +10,19 @@ db = client.dbsparta  # 'dbsparta'라는 이름의 db를 만듭니다.
 @app.route('/')
 def home():
     return render_template('project_2.html')
-## HTML을 주는 부분
-# @app.route('/search')
-# def search():
-#     return render_template('project_1_main.html')
+
+@app.route('/hosworks/delete', methods=['POST'])
+def deleterow():
+    # 1. 클라이언트가 전달한 name_give를 name_receive 변수에 넣습니다.
+    day_receive = request.form['day_give']
+    # works_receive = request.form['works_give']
+    # etc_receive = request.form['etc_give']
+    # 2. mystar 목록에서 delete_one으로 name이 name_receive와 일치하는 star를 제거합니다.
+    db.hosworks.delete_one({'day': day_receive})
+    # db.hosworks.delete_one({'works': works_receive})
+    # db.hosworks.delete_one({'etc': etc_receive})
+    # 3. 성공하면 success 메시지를 반환합니다.
+    return jsonify({'result': 'success'})
 
 
 ## API 역할을 하는 부분
