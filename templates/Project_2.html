@@ -38,7 +38,7 @@
                 data: {day_give: day, works_give: works, etc_give: etc, name_give: name},
                 success: function (response) {
                     if (response["result"] == "success") {
-                        makeHoswork(day, works, etc, name);
+                        makeHosworks(day, works, etc, name);
                     }
 
                 }
@@ -73,23 +73,19 @@
             })
         }
 
-        function deleteRow(day,e) {
+        function deleteRow(day, name, e) {
             $.ajax({
                 type: 'POST',
                 url: '/hosworks/delete',
-                data: {'day_give': day},
+                data: {'day_give': day, 'name_give': name},
                 success: function (response) {
                     if (response['result'] == 'success') {
-                        //let msg = response['msg'];
-                        //alert(msg)
-                        //메세지 없이 자동으로 새로고침을 하고싶다.
-                        //메세지를 없애면, 서버에서도 msg를 지워도 됨.경
-                        //location.reload();
                         $(e).parent().parent().remove();
                     }
                 }
             });
         }
+
         // function deleteRow(day, works, etc) {
         //     // 1. 서버에 1) POST 방식으로, 2) /api/delete 라는 url에, 3) name_give라는 이름으로 name을 전달합니다.
         //     // 참고) POST 방식이므로 data: {'name_give': name} 과 같은 양식이 되어야합니다!
@@ -119,12 +115,12 @@
             $("#findhos-box").html(tempHtmlhos);
         }
 
-        function makeHoswork(day, works, etc, name) {
+        function makeHosworks(day, works, etc, name) {
             let tempHtml = `<tr>
                         <td>${day}</td>
                         <td>${works}</td>
                         <td>${etc}</td>
-                        <td><button type="button" onclick="deleteRow(this);">x</button></td>
+                        <td><button type="button" onclick="deleteRow('day', 'name', this);">x</button></td>
                     </tr>`;
             `<b>${name}</b></p>`
 
@@ -278,9 +274,9 @@
         </tr>
         <tbody id="hosworks-box">
         <tr>
-                        <td>20.08.18</td>
-                        <td>2bay_HDD교체,cluster AD 재구성</td>
-                        <td>20년12월중 병원이전</td>
+            <td>20.08.18</td>
+            <td>2bay_HDD교체,cluster AD 재구성</td>
+            <td>20년12월중 병원이전</td>
         </tr>
 
     </table>

@@ -15,19 +15,15 @@ def home():
 def deleterow():
     # 1. 클라이언트가 전달한 name_give를 name_receive 변수에 넣습니다.
     day_receive = request.form['day_give']
-    # works_receive = request.form['works_give']
-    # etc_receive = request.form['etc_give']
+    name_receive = request.form['name_give']
     # 2. mystar 목록에서 delete_one으로 name이 name_receive와 일치하는 star를 제거합니다.
-    db.hosworks.delete_one({'day': day_receive})
-    # db.hosworks.delete_one({'works': works_receive})
-    # db.hosworks.delete_one({'etc': etc_receive})
-    # 3. 성공하면 success 메시지를 반환합니다.
+    db.hosworks.delete_one({'day': day_receive}, {'name': name_receive})
     return jsonify({'result': 'success'})
 
 
 ## API 역할을 하는 부분
-@app.route('/hosname', methods=['POST'])
-def write_hosname():
+@app.route('/hos', methods=['POST'])
+def write_hos():
     name_receive = request.form['name_give']
     address_receive = request.form['address_give']
     number_receive = request.form['number_give']
@@ -36,7 +32,7 @@ def write_hosname():
     email_receive = request.form['email_give']
 
     # DB에 삽입할 review 만들기
-    hosname = {
+    hos = {
         'name': name_receive,
         'address': address_receive,
         'number': number_receive,
@@ -45,7 +41,7 @@ def write_hosname():
         'email': email_receive,
     }
     # reviews에 review 저장하기
-    db.hosname.insert_one(hosname)
+    db.hos.insert_one(hos)
     # 성공 여부 & 성공 메시지 반환
     return jsonify({'result': 'success'})
 
