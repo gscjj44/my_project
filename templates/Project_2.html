@@ -62,10 +62,10 @@
                         }
                     }
                     if (response["result"] == "success") {
-                        let hosworks = response["hosworks"];
+                        let hosworks = response['hosworks'];
                         // 3. 요청 성공했을 때 리뷰를 올바르게 화면에 나타내기
                         for (let i = 0; i < hosworks.length; i++) {
-                            makeHoswork(hosworks[i]["day"], hosworks[i]["works"], hosworks[i]["etc"], hosworks[i]["name"]);
+                            makeHosworks(hosworks[i]["day"], hosworks[i]["works"], hosworks[i]["etc"], hosworks[i]["name"]);
                             // window.location.reload();
                         }
                     }
@@ -120,9 +120,9 @@
                         <td>${day}</td>
                         <td>${works}</td>
                         <td>${etc}</td>
-                        <td><button type="button" onclick="deleteRow('day', 'name', this);">x</button></td>
+                        <td><button type="button" onclick="deleteRow('${day}', '${name}', this);">x</button></td>
                     </tr>`;
-            `<b>${name}</b></p>`
+
 
             $("#hosworks-box").append(tempHtml);
         }

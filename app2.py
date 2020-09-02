@@ -3,13 +3,13 @@ from pymongo import MongoClient  # pymongo를 임포트 하기(패키지 인스�
 
 app = Flask(__name__)
 
-client = MongoClient('localhost', 27017)  # mongoDB는 27017 포트로 돌아갑니다.
+client = MongoClient('mongodb://sparta:sparta123!@13.209.98.172', 27017)  # mongoDB는 27017 포트로 돌아갑니다.
 db = client.dbsparta  # 'dbsparta'라는 이름의 db를 만듭니다.
 
 ## HTML을 주는 부분
 @app.route('/')
 def home():
-    return render_template('project_2.html')
+    return render_template('Project_2.html')
 
 @app.route('/hosworks/delete', methods=['POST'])
 def deleterow():
@@ -17,7 +17,7 @@ def deleterow():
     day_receive = request.form['day_give']
     name_receive = request.form['name_give']
     # 2. mystar 목록에서 delete_one으로 name이 name_receive와 일치하는 star를 제거합니다.
-    db.hosworks.delete_one({'day': day_receive}, {'name': name_receive})
+    db.hosworks.delete_one({'day': day_receive, 'name': name_receive})
     return jsonify({'result': 'success'})
 
 
